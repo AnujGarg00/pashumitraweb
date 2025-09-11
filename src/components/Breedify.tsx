@@ -26,7 +26,7 @@ export function Breedify() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch('https://pashumitrabackend-production.up.railway.app/predict', {
         method: 'POST',
         body: formData,
       });
