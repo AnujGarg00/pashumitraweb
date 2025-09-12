@@ -5,6 +5,9 @@ import {
   Award,
   Heart,
   Smartphone,
+  TestTube,
+  Paperclip,
+  Info,
 } from "lucide-react";
 import {
   Card,
@@ -30,7 +33,18 @@ export function AboutUs() {
       description:
         language === "hi"
           ? "उन्नत कृत्रिम बुद्धिमत्ता से तुरंत नस्ल की पहचान"
-          : "Advanced artificial intelligence for instant breed identification",
+          : "Advanced artificial intelligence for instant breed identification.",
+    },
+    {
+      icon: TestTube,
+      title:
+        language === "hi"
+          ? "क्रॉस-ब्रीड पहचान"
+          : "Cross-Breed Detection",
+      description:
+        language === "hi"
+          ? "मिश्रित नस्लों के लिए संभावित प्रतिशत अनुमान"
+          : "Provides possible mixture percentage estimates for crossbreeds.",
     },
     {
       icon: Heart,
@@ -41,7 +55,7 @@ export function AboutUs() {
       description:
         language === "hi"
           ? "पशुओं के स्वास्थ्य की संपूर्ण जानकारी और सुझाव"
-          : "Comprehensive health information and recommendations",
+          : "Comprehensive health information and recommendations.",
     },
     {
       icon: Users,
@@ -50,18 +64,29 @@ export function AboutUs() {
       description:
         language === "hi"
           ? "पशु चिकित्सकों और विशेषज्ञों की सलाह"
-          : "Advice from veterinarians and livestock experts",
+          : "Advice from veterinarians and livestock experts.",
     },
     {
-      icon: Heart,
+      icon: Paperclip,
       title:
         language === "hi"
           ? "भारतीय नस्लों पर केंद्रित"
-          : "Focused on Indian Breeds",
+          : "Indian Breed Database",
       description:
         language === "hi"
           ? "भारतीय गाय और भैंस की नस्लों की विशेष जानकारी"
-          : "Specialized information on Indian cattle and buffalo breeds",
+          : "Access to detailed information of major Indian cattle and buffalo breeds.",
+    },
+    {
+      icon: Info,
+      title:
+        language === "hi"
+          ? "ऑफलाइन मोड"
+          : "Offline Mode",
+      description:
+        language === "hi"
+          ? "इंटरनेट के बिना भी काम करता है, दूर-दराज के गांवों में आसानी से उपलब्ध"
+          : "Works without internet, making it easily accessible in remote villages.",
     },
   ];
 
@@ -97,8 +122,8 @@ export function AboutUs() {
         language === "hi" ? "डेटा/डीबी लीड" : "Data/DB Lead",
       course:
         language === "hi"
-          ? "बीटेक सीएसई - सीएस"
-          : "BTech CSE - CS",
+          ? "बीटेक सीएसई"
+          : "BTech CSE-CS",
     },
     {
       name: language === "hi" ? "आस्था सिक्का" : "Aastha Sikka",
@@ -119,8 +144,8 @@ export function AboutUs() {
           : "Research and Pitch Lead",
       course:
         language === "hi"
-          ? "बीटेक सीएसई - सीएस"
-          : "BTech CSE - CS",
+          ? "बीटेक सीएसई"
+          : "BTech CSE-CS",
     },
   ];
 
@@ -161,7 +186,7 @@ export function AboutUs() {
         <p className="text-lg text-green-600 max-w-3xl mx-auto">
           {language === "hi"
             ? "पशुमित्र भारतीय किसानों के लिए बनाया गया एक उन्नत डिजिटल साथी है जो कृत्रिम बुद्धिमत्ता की शक्ति से आपके पशुपालन को बेहतर बनाता है।"
-            : "PashuMitra is an advanced digital companion designed for Indian farmers, leveraging the power of artificial intelligence to enhance your livestock management."}
+            : "PashuMitra is an AI-powered platform that helps farmers, veterinarians, and field workers to accurately identify cattle and buffalo breeds with just a photo. In a country like India, where indigenous and crossbred animals are highly diverse, correct breed recognition plays a crucial role in animal health management, nutrition planning and breeding programs."}
         </p>
       </div>
 
@@ -180,7 +205,7 @@ export function AboutUs() {
             <p className="text-lg">
               {language === "hi"
                 ? "प्रत्येक भारतीय किसान को आधुनिक तकनीक के साथ सशक्त बनाना और पशुपालन को अधिक लाभकारी एवं टिकाऊ बनाना।"
-                : "To empower every Indian farmer with modern technology and make livestock farming more profitable and sustainable."}
+                : "To empower farmers and livestock workers with simple, smart, and reliable tools that can improve animal care, health, and productivity while preserving India's rich indigenous cattle and buffalo heritage."}
             </p>
           </div>
         </div>
@@ -227,7 +252,7 @@ export function AboutUs() {
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="bg-green-100 p-3 rounded-lg">
-                      <Icon className="h-8 w-8 text-green-600" />
+                      <Icon className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold mb-2">
@@ -256,12 +281,12 @@ export function AboutUs() {
           <p className="text-gray-700">
             {language === "hi"
               ? "पशुमित्र की शुरुआत एक सामान्य समस्या से हुई - भारतीय किसानों को अपने पशुओं की सही नस्ल की पहचान करने में कठिनाई होती थी। हमारी टीम ने देखा कि कैसे गलत जानकारी के कारण किसान सही देखभाल नहीं कर पाते थे।"
-              : "PashuMitra began with a common problem - Indian farmers struggled to correctly identify their livestock breeds. Our team observed how incorrect information led to improper care and reduced productivity."}
+              : "The idea of PashuMitra was born after realizing how often field workers misidentify breeds during livestock surveys. This affects government planning, farmer benefits, and animal care. Our team of technologists and animal science enthusiasts came together to create a solution that combines Artificial Intelligence with traditional wisdom."}
           </p>
           <p className="text-gray-700">
             {language === "hi"
               ? "इसी समस्या का समाधान करने के लिए, हमने कृत्रिम बुद्धिमत्ता और पशु विशेषज्ञों के ज्ञान को मिलाकर एक ऐसा प्लेटफॉर्म बनाया जो किसानों को सटीक जानकारी और व्यक्तिगत सुझाव देता है।"
-              : "To solve this problem, we combined artificial intelligence with veterinary expertise to create a platform that provides accurate information and personalized recommendations to farmers."}
+              : "To solve this problem, we combined artificial intelligence with veterinary expertise to create a platform that provides accurate information and personalized recommendations to farmers. Today, PashuMitra is on a mission to become the trusted friend of every farmer and livestock worker."}
           </p>
         </CardContent>
       </Card>
