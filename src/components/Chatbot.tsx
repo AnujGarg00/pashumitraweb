@@ -13,10 +13,19 @@ interface Message {
   timestamp: Date;
 }
 
-// Gemini API Configuration - Try multiple ways to get the API key
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || 
-                       process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
-                       process.env.GEMINI_API_KEY;
+// Gemini API Configuration - Vercel compatible
+const getApiKey = () => {
+  // For local development
+  if (typeof window === 'undefined') {
+    return process.env.REACT_APP_GEMINI_API_KEY;
+  }
+  
+  // For client-side (Vercel builds inject these at build time)
+  return process.env.REACT_APP_GEMINI_API_KEY || 
+         (window as any).__ENV__?.REACT_APP_GEMINI_API_KEY;
+};
+
+const GEMINI_API_KEY = getApiKey();
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 
 export function Chatbot() {
