@@ -14,7 +14,7 @@ interface Message {
 }
 
 // Gemini API Configuration
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API;
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 export function Chatbot() {
@@ -43,7 +43,7 @@ export function Chatbot() {
 
   const createSystemPrompt = (userMessage: string) => {
     const basePrompt = language === 'hi' 
-      ? `तुम एक विशेषज्ञ पशुपालन सलाहकार हो। तुम्हें केवल पशुपालन और कृषि पशुओं के बारे में बात करनी है। इसके अलावा आपको केवल छोटे उत्तर या लंबे उत्तर तभी देने हैं जब उनकी आवश्यकता हो।
+      ? `तुम एक विशेषज्ञ पशुपालन सलाहकार हो। तुम्हें केवल पशुपालन और कृषि पशुओं के बारे में बात करनी है।
 
          महत्वपूर्ण नियम:
          - तुम केवल पशुओं (गाय, भैंस, बकरी, भेड़, मुर्गी, सूअर आदि) के बारे में जवाब दोगे
@@ -63,7 +63,7 @@ export function Chatbot() {
          हमेशा व्यावहारिक सलाह दो और गंभीर स्थिति में पशु चिकित्सक की सलाह लेने को कहो।
          
          प्रश्न: ${userMessage}`
-      : `You are a LIVESTOCK AND ANIMAL FARMING expert. You ONLY discuss topics related to animals and farming. ALSO YOU HAVE TO GIVE ONLY SHORT ANSWERS LONG ANSWERS ONLY WHEN THEY ARE NEEDED.
+      : `You are a LIVESTOCK AND ANIMAL FARMING expert. You ONLY discuss topics related to animals and farming.
 
          STRICT RULES:
          - ONLY answer questions about livestock, farm animals, and animal husbandry
@@ -91,7 +91,12 @@ export function Chatbot() {
 
   const callGeminiAPI = async (userMessage: string): Promise<string> => {
     try {
+      // Debug: Log if API key exists (without exposing the key)
+      console.log('API Key exists:', !!GEMINI_API_KEY);
+      console.log('API Key length:', GEMINI_API_KEY?.length || 0);
+      
       if (!GEMINI_API_KEY) {
+        console.error('Gemini API key not found in environment variables');
         throw new Error('Gemini API key not configured');
       }
 
@@ -127,22 +132,49 @@ export function Chatbot() {
         }),
       });
 
+      console.log('API Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('API Response received:', !!data.candidates);
       
       if (data.candidates && data.candidates[0] && data.candidates[0].content) {
         return data.candidates[0].content.parts[0].text;
       } else {
+        console.error('Invalid API response structure:', data);
         throw new Error('Invalid response format from Gemini API');
       }
     } catch (error) {
-      console.error('Gemini API Error:', error);
+      console.error('Gemini API Error Details:', error);
+      
+      // More specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes('not configured')) {
+          return language === 'hi' 
+            ? '⚙️ API कॉन्फ़िगरेशन की समस्या है। कृपया डेवलपर से संपर्क करें।'
+            : '⚙️ API configuration issue. Please contact the developer.';
+        }
+        if (error.message.includes('403') || error.message.includes('401')) {
+          return language === 'hi' 
+            ? '🔑 API key की समस्या है। कृपया डेवलपर से संपर्क करें।'
+            : '🔑 API key issue. Please contact the developer.';
+        }
+        if (error.message.includes('429')) {
+          return language === 'hi' 
+            ? '⏱️ बहुत सारे अनुरोध हो गए हैं। कृपया थोड़ी देर बाद कोशिश करें।'
+            : '⏱️ Too many requests. Please try again in a moment.';
+        }
+      }
       
       // Fallback response
-      return `Debug Error: ${error.message}. API Key: ${GEMINI_API_KEY ? 'Present' : 'Missing'}`;
+      return language === 'hi' 
+        ? '❌ तकनीकी समस्या हो रही है। कृपया थोड़ी देर बाद कोशिश करें। (Error logged to console)'
+        : '❌ Technical issues right now. Please try again later. (Error logged to console)';
     }
   };
 
@@ -204,16 +236,14 @@ export function Chatbot() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="space-y-6 max-w-4xl mx-auto px-4">
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <MessageCircle className="h-8 w-8 text-green-600" />
-            <h1 className="text-3xl font-semibold text-green-800">{t('chatbot')}</h1>
-          </div>
-          <p className="text-lg text-green-600">{t('chatWithAI')}</p>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center gap-3">
+          <MessageCircle className="h-8 w-8 text-green-600" />
+          <h1 className="text-3xl font-semibold text-green-800">{t('chatbot')}</h1>
+        </div>
+        <p className="text-lg text-green-600">{t('chatWithAI')}</p>
       </div>
-    </div>  
 
       {/* Quick Questions */}
       <Card className="border-green-200">
@@ -240,9 +270,9 @@ export function Chatbot() {
       </Card>
 
       {/* Chat Interface */}
-      <Card className="min-h-[500px] max-h-[70vh]">
-        <CardContent className="p-0 h-full flex flex-col min-h-[500px] max-h-[70vh]">
-          <ScrollArea className="flex-1 p-4 max-h-[calc(70vh-80px)]">
+      <Card className="h-96">
+        <CardContent className="p-0 h-full flex flex-col">
+          <ScrollArea className="flex-1 p-4">
             <div className="space-y-4">
               {messages.map((message) => (
                 <div
