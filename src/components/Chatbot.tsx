@@ -142,9 +142,7 @@ export function Chatbot() {
       console.error('Gemini API Error:', error);
       
       // Fallback response
-      return language === 'hi' 
-        ? 'माफ करें, अभी मुझे कुछ तकनीकी समस्या हो रही है। कृपया थोड़ी देर बाद कोशिश करें या अपना प्रश्न दोबारा पूछें।'
-        : 'Sorry, I\'m experiencing some technical issues right now. Please try again in a moment or rephrase your question.';
+      return `Debug Error: ${error.message}. API Key: ${GEMINI_API_KEY ? 'Present' : 'Missing'}`;
     }
   };
 
