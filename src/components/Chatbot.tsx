@@ -13,6 +13,10 @@ interface Message {
   timestamp: Date;
 }
 
+// Gemini API Configuration
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
 export function Chatbot() {
   const { t, language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
@@ -37,34 +41,110 @@ export function Chatbot() {
     scrollToBottom();
   }, [messages]);
 
-  const generateBotResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
+  const createSystemPrompt = (userMessage: string) => {
+    const basePrompt = language === 'hi' 
+      ? `तुम एक विशेषज्ञ पशुपालन सलाहकार हो। तुम्हें केवल पशुपालन और कृषि पशुओं के बारे में बात करनी है। इसके अलावा आपको केवल छोटे उत्तर या लंबे उत्तर तभी देने हैं जब उनकी आवश्यकता हो।
+
+         महत्वपूर्ण नियम:
+         - तुम केवल पशुओं (गाय, भैंस, बकरी, भेड़, मुर्गी, सूअर आदि) के बारे में जवाब दोगे
+         - अगर कोई प्रश्न पशुओं से संबंधित नहीं है, तो विनम्रता से मना कर दो
+         - तुम्हारे विशेषज्ञता के क्षेत्र हैं:
+           * पशुओं का स्वास्थ्य और बीमारियां
+           * दूध/अंडा/मांस उत्पादन
+           * चारा और पोषण
+           * भारतीय नस्लों की पहचान
+           * पशुपालन की तकनीकें
+           * पशु आवास और देखभाल
+           * टीकाकरण कार्यक्रम
+         
+         अगर कोई राजनीति, तकनीक, फिल्म, खेल या अन्य विषय पूछे तो कहना:
+         "मैं केवल पशुपालन विशेषज्ञ हूं। कृपया अपने पशुओं से संबंधित प्रश्न पूछें।"
+         
+         हमेशा व्यावहारिक सलाह दो और गंभीर स्थिति में पशु चिकित्सक की सलाह लेने को कहो।
+         
+         प्रश्न: ${userMessage}`
+      : `You are a LIVESTOCK AND ANIMAL FARMING expert. You ONLY discuss topics related to animals and farming. ALSO YOU HAVE TO GIVE ONLY SHORT ANSWERS LONG ANSWERS ONLY WHEN THEY ARE NEEDED.
+
+         STRICT RULES:
+         - ONLY answer questions about livestock, farm animals, and animal husbandry
+         - If asked about anything else, politely decline and redirect to animal topics
+         - Your expertise areas are:
+           * Animal health and diseases
+           * Milk/egg/meat production
+           * Feed and nutrition
+           * Indian/global breed identification
+           * Animal husbandry techniques
+           * Animal housing and care
+           * Vaccination programs
+           * Breeding and genetics
+         
+         If asked about politics, technology, movies, sports, or other non-animal topics, respond:
+         "I'm specialized only in livestock and animal farming. Please ask me questions about your animals or farming."
+         
+         Always provide practical advice and recommend consulting a veterinarian for serious health issues.
+         Keep responses helpful and focused on animals only.
+         
+         Question: ${userMessage}`;
     
-    if (language === 'hi') {
-      if (lowerMessage.includes('दूध') || lowerMessage.includes('milk')) {
-        return 'दूध उत्पादन बढ़ाने के लिए: 1) संतुलित आहार दें 2) साफ पानी उपलब्ध कराएं 3) नियमित दूध निकालें 4) गाय को तनाव से बचाएं। क्या आप किसी विशेष नस्ल के बारे में जानना चाहते हैं?';
+    return basePrompt;
+  };
+
+  const callGeminiAPI = async (userMessage: string): Promise<string> => {
+    try {
+      if (!GEMINI_API_KEY) {
+        throw new Error('Gemini API key not configured');
       }
-      if (lowerMessage.includes('बीमारी') || lowerMessage.includes('health')) {
-        return 'पशु स्वास्थ्य के लिए: 1) नियमित टीकाकरण कराएं 2) साफ-सफाई रखें 3) बुखार, दस्त या खांसी के लक्षण दिखें तो तुरंत डॉक्टर से संपर्क करें। क्या कोई विशेष लक्षण है?';
+
+      const prompt = createSystemPrompt(userMessage);
+      
+      const response = await fetch(GEMINI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: 512,
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            }
+          ]
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
       }
-      if (lowerMessage.includes('चारा') || lowerMessage.includes('feed')) {
-        return 'अच्छा चारा: 1) 60% हरा चारा 2) 30% भूसा 3) 10% दाना मिश्रण। गर्मी में अधिक पानी दें और शाम-सुबह खिलाएं।';
+
+      const data = await response.json();
+      
+      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error('Invalid response format from Gemini API');
       }
-      return 'यह एक अच्छा सवाल है! मैं आपकी गायों और भैंसों के पोषण, स्वास्थ्य, नस्ल की पहचान, और देखभाल में मदद कर सकता हूं। कृपया अधिक विस्तार से बताएं कि आप क्या जानना चाहते हैं।';
-    } else {
-      if (lowerMessage.includes('milk') || lowerMessage.includes('production')) {
-        return 'To increase milk production: 1) Provide balanced diet 2) Ensure clean water availability 3) Regular milking schedule 4) Reduce stress. Which breed are you working with?';
-      }
-      if (lowerMessage.includes('disease') || lowerMessage.includes('sick') || lowerMessage.includes('health')) {
-        return 'For animal health: 1) Regular vaccination 2) Maintain hygiene 3) Watch for symptoms like fever, diarrhea, coughing 4) Consult vet immediately if symptoms appear. What specific symptoms are you observing?';
-      }
-      if (lowerMessage.includes('feed') || lowerMessage.includes('nutrition') || lowerMessage.includes('food')) {
-        return 'Ideal feed composition: 1) 60% green fodder 2) 30% dry fodder 3) 10% concentrate mix. Provide more water in summer and feed during cooler hours.';
-      }
-      if (lowerMessage.includes('breed') || lowerMessage.includes('identify')) {
-        return 'I can help identify Indian cattle and buffalo breeds! You can upload a photo using the Breedify feature. Popular Indian breeds include Gir, Sahiwal, Red Sindhi, Tharparkar, Kankrej, and Murrah Buffalo. What would you like to know about these breeds?';
-      }
-      return 'That\'s a great question! I can help you with cattle and buffalo nutrition, health, breed identification, and care. Please provide more details about what you\'d like to know.';
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      
+      // Fallback response
+      return language === 'hi' 
+        ? 'माफ करें, अभी मुझे कुछ तकनीकी समस्या हो रही है। कृपया थोड़ी देर बाद कोशिश करें या अपना प्रश्न दोबारा पूछें।'
+        : 'Sorry, I\'m experiencing some technical issues right now. Please try again in a moment or rephrase your question.';
     }
   };
 
@@ -79,21 +159,38 @@ export function Chatbot() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
+    try {
+      // Call Gemini API
+      const botResponseText = await callGeminiAPI(currentMessage);
+      
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: generateBotResponse(inputMessage),
+        text: botResponseText,
         sender: 'bot',
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error getting bot response:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: language === 'hi' 
+          ? 'क्षमा करें, कुछ गलत हुआ। कृपया दोबारा कोशिश करें।'
+          : 'Sorry, something went wrong. Please try again.',
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const quickQuestions = language === 'hi' ? [
@@ -109,14 +206,16 @@ export function Chatbot() {
   ];
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3">
-          <MessageCircle className="h-8 w-8 text-green-600" />
-          <h1 className="text-3xl font-semibold text-green-800">{t('chatbot')}</h1>
-        </div>
-        <p className="text-lg text-green-600">{t('chatWithAI')}</p>
+    <div className="min-h-screen bg-gray-50 py-6">
+      <div className="space-y-6 max-w-4xl mx-auto px-4">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <MessageCircle className="h-8 w-8 text-green-600" />
+            <h1 className="text-3xl font-semibold text-green-800">{t('chatbot')}</h1>
+          </div>
+          <p className="text-lg text-green-600">{t('chatWithAI')}</p>
       </div>
+    </div>  
 
       {/* Quick Questions */}
       <Card className="border-green-200">
@@ -143,9 +242,9 @@ export function Chatbot() {
       </Card>
 
       {/* Chat Interface */}
-      <Card className="h-96">
-        <CardContent className="p-0 h-full flex flex-col">
-          <ScrollArea className="flex-1 p-4">
+      <Card className="min-h-[500px] max-h-[70vh]">
+        <CardContent className="p-0 h-full flex flex-col min-h-[500px] max-h-[70vh]">
+          <ScrollArea className="flex-1 p-4 max-h-[calc(70vh-80px)]">
             <div className="space-y-4">
               {messages.map((message) => (
                 <div
@@ -168,7 +267,7 @@ export function Chatbot() {
                       ? 'bg-green-600 text-white'
                       : 'bg-gray-100 text-gray-800'
                   }`}>
-                    <p className="text-sm">{message.text}</p>
+                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                     <p className={`text-xs mt-1 ${
                       message.sender === 'user' ? 'text-green-100' : 'text-gray-500'
                     }`}>
