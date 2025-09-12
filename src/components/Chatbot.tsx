@@ -13,9 +13,11 @@ interface Message {
   timestamp: Date;
 }
 
-// Gemini API Configuration
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+// Gemini API Configuration - Try multiple ways to get the API key
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || 
+                       process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
+                       process.env.GEMINI_API_KEY;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 
 export function Chatbot() {
   const { t, language } = useLanguage();
