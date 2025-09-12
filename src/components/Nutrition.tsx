@@ -40,19 +40,19 @@ export function Nutrition() {
       name: 'Green Fodder (हरा चारा)',
       description: 'Fresh grass, maize, sorghum',
       benefits: ['High fiber', 'Easy digestion', 'Cost effective'],
-      image: 'https://images.unsplash.com/photo-1613408857068-6d231d0c6875?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFsdGh5JTIwY2F0dGxlJTIwbnV0cml0aW9uJTIwZmVlZHxlbnwxfHx8fDE3NTcyMzcyNzB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      image: 'https://images.unsplash.com/photo-1696764874241-dba4e9e5309c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmVlbiUyMGZvZGRlciUyMGdyYXNzJTIwY2F0dGxlJTIwZmVlZHxlbnwxfHx8fDE3NTc0MzkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
     },
     {
       name: 'Dry Fodder (भूसा)',
       description: 'Wheat straw, rice straw, hay',
       benefits: ['Bulk feeding', 'Fiber source', 'Available year-round'],
-      image: 'https://images.unsplash.com/photo-1613408857068-6d231d0c6875?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFsdGh5JTIwY2F0dGxlJTIwbnV0cml0aW9uJTIwZmVlZHxlbnwxfHx8fDE3NTcyMzcyNzB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      image: 'https://images.unsplash.com/photo-1697191579403-d1853ae3f9ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkcnklMjBmb2RkZXIlMjBoYXklMjBzdHJhdyUyMGNhdHRsZXxlbnwxfHx8fDE3NTc0MzkwMzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
     },
     {
       name: 'Concentrate (दाना मिश्रण)',
       description: 'Grains, oil cakes, minerals',
       benefits: ['High energy', 'Protein rich', 'Better milk yield'],
-      image: 'https://images.unsplash.com/photo-1613408857068-6d231d0c6875?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFsdGh5JTIwY2F0dGxlJTIwbnV0cml0aW9uJTIwZmVlZHxlbnwxfHx8fDE3NTcyMzcyNzB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      image: 'https://images.unsplash.com/photo-1613408857068-6d231d0c6875?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25jZW50cmF0ZSUyMGNhdHRsZSUyMGZlZWQlMjBncmFpbnMlMjBwZWxsZXRzfGVufDF8fHx8MTc1NzQzOTAzNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
     }
   ];
 
