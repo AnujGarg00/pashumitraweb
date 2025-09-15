@@ -92,18 +92,18 @@ export function AboutUs() {
 
   const teamMembers = [
     {
+      name: language === "hi" ? "अनुज गर्ग" : "Anuj Garg",
+      role:
+        language === "hi"
+          ? "बैकेंड/एपीआई/AI-ML प्रोटोटाइप लीड"
+          : "Backend/API/AI-ML Prototype Lead",
+      course: language === "hi" ? "बीटेक सीएसई" : "BTech CSE",
+    },
+    {
       name:
         language === "hi" ? "मिष्टी गौतम" : "Mishthi Gautam",
       role:
         language === "hi" ? "फ्रंटेंड लीड" : "Frontend Lead",
-      course: language === "hi" ? "बीटेक सीएसई" : "BTech CSE",
-    },
-    {
-      name: language === "hi" ? "अनुज गर्ग" : "Anuj Garg",
-      role:
-        language === "hi"
-          ? "बैकेंड/एपीआई लीड"
-          : "Backend/API Lead",
       course: language === "hi" ? "बीटेक सीएसई" : "BTech CSE",
     },
     {
